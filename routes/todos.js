@@ -13,10 +13,23 @@ router.get('/', (request, response) => {
 });
 
 router.post('/', (request, response) => {
-  !request.body  ? return response.sendStatus(400);
+  if(!request.body) {
+    return response.sendStatus(400);
+  }
+
   db.Todo.create(request.body)
     .then((newItem) => {
-      response.json(newItem);
+      response.status(201).json(newItem);
+    })
+    .catch((error) => {
+      response.send(error);
+    });
+});
+
+router.get('/:todoId', (request, response) => {
+   db.Todo.findById(request.params.todoId)
+    .then((foundTodo) => {
+      response.json(foundTodo);
     })
     .catch((error) => {
       response.send(error);
