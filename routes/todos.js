@@ -1,39 +1,15 @@
 let express = require('express');
 let router = express.Router();
 let db = require("../models");
+let routingHelpers = require('../helpers/todos');
 
-router.get('/', (request, response) => {
-   db.Todo.find()
-    .then((todos) => {
-      response.json(todos);
-    })
-    .catch((error) => {
-      response.send(error);
-    });
-});
+router.route('/')
+  .get(routingHelpers.getTodos)
+  .post(routingHelpers.createTodo);
 
-router.post('/', (request, response) => {
-  if(!request.body) {
-    return response.sendStatus(400);
-  }
-
-  db.Todo.create(request.body)
-    .then((newItem) => {
-      response.status(201).json(newItem);
-    })
-    .catch((error) => {
-      response.send(error);
-    });
-});
-
-router.get('/:todoId', (request, response) => {
-   db.Todo.findById(request.params.todoId)
-    .then((foundTodo) => {
-      response.json(foundTodo);
-    })
-    .catch((error) => {
-      response.send(error);
-    });
-});
+router.route('/:todoId')
+  .get(routingHelpers.getTodoById)
+  .put(routingHelpers.updateTodo)
+  .delete(routingHelpers.deleteTodo);
 
  module.exports = router;
